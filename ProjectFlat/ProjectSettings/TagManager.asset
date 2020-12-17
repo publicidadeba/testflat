@@ -8,6 +8,7 @@ TagManager:
   - destroy
   - basemode
   - player
+  - killer
   layers:
   - Default
   - TransparentFX
@@ -19,9 +20,9 @@ TagManager:
   - 
   - ground
   - grass
-  - 
-  - 
-  - 
+  - grassreg
+  - playerlayer
+  - monster
   - 
   - 
   - 

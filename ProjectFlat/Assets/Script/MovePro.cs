@@ -18,6 +18,7 @@ public class MovePro : MonoBehaviour
      
 
     public GameObject plant;
+    public GameObject spawnerkiller;
     public Transform firePoint;
     public Renderer rend;
 
@@ -75,6 +76,7 @@ public class MovePro : MonoBehaviour
         if(Input.GetButtonDown("X") && gameObject.CompareTag("player"))
         {
         
+        
         isHidden = Physics2D.OverlapCircle(groundCheck.position, checkRadius, whatIsGrass);
         Debug.Log("rodou 1");
         rb.velocity = new Vector2(0 * 0, 0);
@@ -90,7 +92,7 @@ public class MovePro : MonoBehaviour
         if(Input.GetButtonDown("Z") && gameObject.CompareTag("basemode"))
         {
         
-         
+        Instantiate(spawnerkiller, firePoint.position, firePoint.rotation);
         Debug.Log(gameObject.tag);
         Debug.Log("rodou 2");
          
