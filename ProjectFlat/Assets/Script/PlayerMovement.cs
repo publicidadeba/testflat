@@ -9,6 +9,8 @@ public class PlayerMovement : MonoBehaviour
     public float runSpeed = 20f;
     float horizontalMove = 0f;
     bool jump = false;
+    public GameObject plant;
+    public Transform firePoint;
 
  
 
@@ -20,6 +22,12 @@ public class PlayerMovement : MonoBehaviour
         if(Input.GetButtonDown("Jump"))
         {
             jump = true;
+        }
+
+        //Shooting
+        if(Input.GetButtonDown("X"))
+        {
+        Instantiate(plant, firePoint.position, firePoint.rotation);
         }
         
     }
