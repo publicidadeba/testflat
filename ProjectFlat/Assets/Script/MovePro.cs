@@ -2,112 +2,137 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class MovePro : MonoBehaviour
-{
-    public float speed = 1;
-    public float jumpForce = 1;
-    public float moveInput;
-    private bool facingRight = true;
+public class MovePro: MonoBehaviour {
+  public float speed = 1;
+  public float jumpForce = 1;
+  public float moveInput;
+  private bool facingRight = true;
 
-    private bool isGrounded = true;
-    private bool isHidden = false;
-    public Transform groundCheck;
-    public float checkRadius;
-    public LayerMask whatIsGround;
-    public LayerMask whatIsGrass;
-     
+  private bool isGrounded = true;
+  private bool isHidden = false;
+  public Transform groundCheck;
+  public float checkRadius;
+  public LayerMask whatIsGround;
+  public LayerMask whatIsGrass;
 
-    public GameObject plant;
-    public GameObject spawnerkiller;
-    public Transform firePoint;
-    public Renderer rend;
+  public GameObject plant;
+  public GameObject rock;
+  public GameObject spawnerkiller;
+  public Transform firePoint;
+  public Renderer rend;
+  private float status = 1;
+  private float plantmagic = 0;
+  private float rockmagic = 0;
 
+  private Rigidbody2D rb;
 
-    private Rigidbody2D rb;
+  // Start is called before the first frame update
+  void Start() {
+    rb = GetComponent < Rigidbody2D > ();
+    rend = GetComponent < Renderer > ();
 
-    // Start is called before the first frame update
-    void Start()
-    {
-        rb = GetComponent<Rigidbody2D>();
-                rend = GetComponent<Renderer>();
-        
+  }
+
+  // Update is called once per frame
+  void FixedUpdate() {
+    isGrounded = Physics2D.OverlapCircle(groundCheck.position, checkRadius, whatIsGround);
+
+    //Debug.Log(isHidden);
+
+    if (gameObject.CompareTag("player")) {
+      moveInput = Input.GetAxis("Horizontal");
+      rb.velocity = new Vector2(moveInput * speed, rb.velocity.y);
+
+      if (facingRight == false && moveInput > 0) {
+        Flip();
+      } else if (facingRight == true && moveInput < 0) {
+        Flip();
+      }
+
     }
 
-    // Update is called once per frame
-    void FixedUpdate()
-    {
-        isGrounded = Physics2D.OverlapCircle(groundCheck.position, checkRadius, whatIsGround);
-        
-        Debug.Log(isHidden);
-
-        if(gameObject.CompareTag("player")){
-        moveInput = Input.GetAxis("Horizontal");
-        rb.velocity = new Vector2(moveInput * speed, rb.velocity.y);
-
-        if(facingRight == false && moveInput > 0) {
-            Flip();
-        } else if(facingRight == true && moveInput < 0){
-            Flip();
-        }
-
-        }
-
-        /*if(|Mathf.Approximately(0, Speed)) 
+    /*if(|Mathf.Approximately(0, Speed)) 
         {
             transform.rotation = movement > 0 ? Quaternion.Euler(0.180.0) : Quaternion.identity;
         }
         */
 
+  }
 
+  void Update() {
 
-
-
-    }
-
-
-    void Update (){
-
-        if(Input.GetButtonDown("Jump") && isGrounded == true && gameObject.CompareTag("player")) 
-        {
-            rb.AddForce(new Vector2(0, jumpForce), ForceMode2D.Impulse);
-            
-        }
-
-        if(Input.GetButtonDown("X") && gameObject.CompareTag("player"))
-        {
-        
-        
-        isHidden = Physics2D.OverlapCircle(groundCheck.position, checkRadius, whatIsGrass);
-        Debug.Log("rodou 1");
-        rb.velocity = new Vector2(0 * 0, 0);
-        gameObject.tag = "basemode";
-        rend.enabled = false;
-        Instantiate(plant, firePoint.position, firePoint.rotation);
-         
-        
-        
-        
-        }
-
-        if(Input.GetButtonDown("Z") && gameObject.CompareTag("basemode"))
-        {
-        
-        Instantiate(spawnerkiller, firePoint.position, firePoint.rotation);
-        Debug.Log(gameObject.tag);
-        Debug.Log("rodou 2");
-         
-        rb.velocity = new Vector2(moveInput * speed, rb.velocity.y);
-        gameObject.tag = "player";
-        rend.enabled = true;
-        isHidden = false;
-         
-        
-        }
+//Jump
+    if (Input.GetButtonDown("Jump") && isGrounded == true && gameObject.CompareTag("player")) {
+      rb.AddForce(new Vector2(0, jumpForce), ForceMode2D.Impulse);
 
     }
 
-    //Player Hit
+    if (Input.GetButtonDown("X") && gameObject.CompareTag("player") && plantmagic == 1) {
 
+      StartCoroutine(ExampleCoroutine());
+      isHidden = Physics2D.OverlapCircle(groundCheck.position, checkRadius, whatIsGrass);
+      rb.velocity = new Vector2(0 * 0, 0);
+      gameObject.tag = "basemode";
+      rend.enabled = false;
+      Instantiate(plant, firePoint.position, firePoint.rotation);
+
+    }
+
+    if (Input.GetButtonDown("X") && gameObject.CompareTag("basemode") && status == 0) {
+
+      Instantiate(spawnerkiller, firePoint.position, firePoint.rotation);
+
+      rb.velocity = new Vector2(moveInput * speed, rb.velocity.y);
+      gameObject.tag = "player";
+      rend.enabled = true;
+      isHidden = false;
+      status = 1;
+    }
+
+    if (rb.velocity.y < -80) {
+
+      Instantiate(spawnerkiller, firePoint.position, firePoint.rotation);
+
+    }
+    Debug.Log(isHidden);
+
+  }
+
+  //Player Hit
+
+  void OnTriggerStay2D(Collider2D collision) {
+
+    if (collision.gameObject.CompareTag("destroy") && isHidden == false) {
+
+      Debug.Log("trigger working death");
+      Application.LoadLevel(0);
+
+    }
+
+    //Plant Magic
+        if (collision.gameObject.CompareTag("plantmagic")) {
+
+      Debug.Log("trigger working plant magic");
+      plantmagic = 1;
+
+    }
+
+        //Remove rockmagic
+        if (collision.gameObject.CompareTag("rockmagic")) {
+
+      Debug.Log("trigger working plant magic");
+      plantmagic = 0;
+      rockmagic = 1;
+
+    }
+
+  }
+
+
+
+ 
+
+  /*
     void OnCollisionEnter2D(Collision2D collision)
  {
 
@@ -118,24 +143,25 @@ public class MovePro : MonoBehaviour
    }
 
  }
+ */
 
-    void Flip(){
-        facingRight = !facingRight;
-        Vector3 Scaler = transform.localScale;
-        Scaler.x *= -1;
-        transform.localScale = Scaler;
+  void Flip() {
+    facingRight = !facingRight;
+    Vector3 Scaler = transform.localScale;
+    Scaler.x *= -1;
+    transform.localScale = Scaler;
 
-    }
+  }
 
-    IEnumerator ExampleCoroutine()
-    {
-        //Print the time of when the function is first called.
-        Debug.Log("Started Coroutine at timestamp : " + Time.time);
+  IEnumerator ExampleCoroutine() {
+    //Print the time of when the function is first called.
 
-        //yield on a new YieldInstruction that waits for 5 seconds.
-        yield return new WaitForSeconds(1);
+    //yield on a new YieldInstruction that waits for 5 seconds.
+    yield
+    return new WaitForSeconds(0.2f);
+    status = 0;
 
-        //After we have waited 5 seconds print the time again.
-        Debug.Log("Finished Coroutine at timestamp : " + Time.time);
-    }
+    //After we have waited 5 seconds print the time again.
+
+  }
 }
