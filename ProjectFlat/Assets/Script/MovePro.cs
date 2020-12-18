@@ -18,6 +18,7 @@ public class MovePro: MonoBehaviour {
   public GameObject plant;
   public GameObject rock;
   public GameObject spawnerkiller;
+  public GameObject treekiller;
   public Transform firePoint;
   public Renderer rend;
   private float status = 1;
@@ -50,13 +51,7 @@ public class MovePro: MonoBehaviour {
       }
 
     }
-
-    /*if(|Mathf.Approximately(0, Speed)) 
-        {
-            transform.rotation = movement > 0 ? Quaternion.Euler(0.180.0) : Quaternion.identity;
-        }
-        */
-
+ 
   }
 
   void Update() {
@@ -88,23 +83,27 @@ public class MovePro: MonoBehaviour {
       gameObject.tag = "basemode";
       rend.enabled = false;
       Instantiate(rock, firePoint.position, firePoint.rotation);
+      rb.gravityScale = 20;
 
     }
 
 //Morph Unmorph
     if (Input.GetButtonDown("X") && gameObject.CompareTag("basemode") && status == 0) {
 
-      Instantiate(spawnerkiller, firePoint.position, firePoint.rotation);
+     rb.gravityScale = 5;
+     Instantiate(spawnerkiller, firePoint.position, firePoint.rotation);
       rb.velocity = new Vector2(moveInput * speed, rb.velocity.y);
       gameObject.tag = "player";
       rend.enabled = true;
       isHidden = false;
       status = 1;
     }
+    
+ //Break Tree
+    Debug.Log(rb.velocity.y);
+    if (rb.velocity.y < -70 && gameObject.CompareTag("basemode"))   {
 
-    if (rb.velocity.y < -80) {
-
-      Instantiate(spawnerkiller, firePoint.position, firePoint.rotation);
+      Instantiate(treekiller, firePoint.position, firePoint.rotation);
 
     }
     

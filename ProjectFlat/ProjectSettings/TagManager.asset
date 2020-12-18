@@ -11,6 +11,7 @@ TagManager:
   - killer
   - plantmagic
   - rockmagic
+  - treekiller
   layers:
   - Default
   - TransparentFX
