@@ -67,6 +67,7 @@ public class MovePro: MonoBehaviour {
 
     }
 
+//Morph Grass
     if (Input.GetButtonDown("X") && gameObject.CompareTag("player") && plantmagic == 1) {
 
       StartCoroutine(ExampleCoroutine());
@@ -78,10 +79,22 @@ public class MovePro: MonoBehaviour {
 
     }
 
+//Morph Rock
+    if (Input.GetButtonDown("X") && gameObject.CompareTag("player") && rockmagic == 1) {
+
+      StartCoroutine(ExampleCoroutine());
+      isHidden = Physics2D.OverlapCircle(groundCheck.position, checkRadius, whatIsGrass);
+      rb.velocity = new Vector2(0 * 0, 0);
+      gameObject.tag = "basemode";
+      rend.enabled = false;
+      Instantiate(rock, firePoint.position, firePoint.rotation);
+
+    }
+
+//Morph Unmorph
     if (Input.GetButtonDown("X") && gameObject.CompareTag("basemode") && status == 0) {
 
       Instantiate(spawnerkiller, firePoint.position, firePoint.rotation);
-
       rb.velocity = new Vector2(moveInput * speed, rb.velocity.y);
       gameObject.tag = "player";
       rend.enabled = true;
@@ -94,7 +107,7 @@ public class MovePro: MonoBehaviour {
       Instantiate(spawnerkiller, firePoint.position, firePoint.rotation);
 
     }
-    Debug.Log(isHidden);
+    
 
   }
 
@@ -117,10 +130,10 @@ public class MovePro: MonoBehaviour {
 
     }
 
-        //Remove rockmagic
+        //Remove PlantMagic and Add RockMagic
         if (collision.gameObject.CompareTag("rockmagic")) {
 
-      Debug.Log("trigger working plant magic");
+      Debug.Log("trigger working rock magic");
       plantmagic = 0;
       rockmagic = 1;
 
